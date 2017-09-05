@@ -65,6 +65,9 @@ public class DatabaseForUserConfig {
         properties.put("hibernate.hbm2ddl.auto",
                 env.getProperty("spring.jpa.hibernate.ddl-auto"));
 
+        properties.put("hibernate.hbm2ddl.import_files",
+               "database/import.sql");
+
         properties.put("hibernate.dialect",
                 env.getProperty("spring.jpa.properties.hibernate.dialect"));
 
@@ -93,7 +96,7 @@ public class DatabaseForUserConfig {
         dataSource.setDriverClassName(env.getProperty("spring.datasource.test.driver-class-name"));
 
         dataSource.setUrl(env.getProperty("spring.datasource.test.url"));
-        dataSource.setSchema("/database/import.sql");
+
 
         dataSource.setUsername(env.getProperty("spring.datasource.test.name"));
 

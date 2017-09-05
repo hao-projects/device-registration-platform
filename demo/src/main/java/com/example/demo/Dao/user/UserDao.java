@@ -1,7 +1,6 @@
 package com.example.demo.Dao.user;
 
 import com.example.demo.entity.userModel.UserInfo;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

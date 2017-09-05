@@ -1,11 +1,16 @@
 package com.example.demo.web;
 
 
+import com.example.demo.entity.userModel.UserInfo;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 
+import org.apache.shiro.subject.Subject;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,8 +22,27 @@ import java.util.Map;
 @Controller
 public class HomeController {
     @RequestMapping({"/", "/index"})
-    public String index() {
-        return "/index";
+    public @ResponseBody JSONObject index() {
+        Subject subject= SecurityUtils.getSubject();
+        JSONObject json=new JSONObject();
+        json.append("status",subject.isAuthenticated());
+        UserInfo userInfo =(UserInfo) subject.getPrincipals().getPrimaryPrincipal();
+        json.append("role",userInfo.getRoleList().get(1));
+
+        return json;
+    }
+    @RequestMapping("/logout")
+    public boolean logout(){
+        try{
+            Subject subject=SecurityUtils.getSubject();
+            subject.logout();
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        return true;
+
     }
 
     @RequestMapping("/login")
