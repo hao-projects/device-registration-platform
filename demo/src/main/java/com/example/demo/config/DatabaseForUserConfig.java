@@ -68,6 +68,7 @@ public class DatabaseForUserConfig {
         properties.put("hibernate.dialect",
                 env.getProperty("spring.jpa.properties.hibernate.dialect"));
 
+
         em.setJpaPropertyMap(properties);
 
 
@@ -92,6 +93,7 @@ public class DatabaseForUserConfig {
         dataSource.setDriverClassName(env.getProperty("spring.datasource.test.driver-class-name"));
 
         dataSource.setUrl(env.getProperty("spring.datasource.test.url"));
+        dataSource.setSchema("/database/import.sql");
 
         dataSource.setUsername(env.getProperty("spring.datasource.test.name"));
 
