@@ -2,18 +2,26 @@ package com.example.demo.web;
 
 
 import com.example.demo.entity.userModel.UserInfo;
+import com.example.demo.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.BufferedReader;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -21,16 +29,24 @@ import java.util.Map;
  */
 @Controller
 public class HomeController {
+
+    @Autowired
+    UserService userService;
+
     @RequestMapping({"/", "/index"})
-    public @ResponseBody JSONObject index() {
+    public @ResponseBody String index() {
         Subject subject= SecurityUtils.getSubject();
         JSONObject json=new JSONObject();
         json.append("status",subject.isAuthenticated());
-        UserInfo userInfo =(UserInfo) subject.getPrincipals().getPrimaryPrincipal();
-        json.append("role",userInfo.getRoleList().get(1));
+        String username=(String)subject.getPrincipals().getPrimaryPrincipal();
+        UserInfo userInfo = userService.findByUsername(username);
+        json.append("role",userInfo.getRoleList().get(0).getId().toString());
+//        if(json.getString("role").contains("admin"))
+//            json.append()
 
-        return json;
+        return json.toString();
     }
+
     @RequestMapping("/logout")
     public boolean logout(){
         try{
@@ -72,6 +88,36 @@ public class HomeController {
         // 此方法不处理登录成功,由shiro进行处理
         return "/login";
     }
+@RequestMapping(value = "/login2",method = RequestMethod.POST)
+public  @ResponseBody String adminlogin(HttpServletRequest request) throws  Exception
+{
+    System.out.println(request.getParameter("username"));
+    BufferedReader reader=request.getReader();
+
+    String str, wholeStr = "";
+    while((str = reader.readLine()) != null){
+        wholeStr += str;
+    }
+    System.out.println(wholeStr);
+    //System.out.println(adminlogin2(servletRequest));
+
+    //UsernamePasswordToken uptoken=new UsernamePasswordToken(request.getParameter("username"),request.getParameter
+    //        ("password"));
+    Subject currentuser= SecurityUtils.getSubject();
+    //currentuser.login(uptoken);
+    JSONObject json=new JSONObject();
+
+    if (currentuser.isAuthenticated()==true) {
+        json.append("status","true");
+        UserInfo userInfo2 =(UserInfo) currentuser.getPrincipals().getPrimaryPrincipal();
+        //这里要把获取角色的方法要放到service里
+        json.append("role",userInfo2.getRoleList().get(0).getId().toString());
+        return json.toString();
+    }
+    else
+        json.append("status","false");
+    return json.toString();
+}
 
 
     @RequestMapping("/403")

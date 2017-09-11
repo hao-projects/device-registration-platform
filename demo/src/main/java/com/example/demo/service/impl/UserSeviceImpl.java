@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Created by yang on 2017/7/26.
  */
+//service标识这是一个实现类，这样autowire标识才能够找到，并自动加载这个实现类
 @Service
 public class UserSeviceImpl implements UserService {
     @Autowired
